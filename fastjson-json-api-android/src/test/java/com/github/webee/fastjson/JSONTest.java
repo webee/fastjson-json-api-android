@@ -37,4 +37,13 @@ public class JSONTest {
 
         System.out.println(jsonObject.toJSONString());
     }
+
+    @Test
+    public void test() {
+        JSON json = new fastjsonJSON();
+        JSONObject jsonObject = json.newObject();
+
+        jsonObject.set("key", "中国\uD83D\uDE00");
+        System.out.println(jsonObject.toJSONString());
+    }
 }
