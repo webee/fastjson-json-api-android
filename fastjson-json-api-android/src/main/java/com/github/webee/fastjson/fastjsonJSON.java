@@ -1,5 +1,8 @@
 package com.github.webee.fastjson;
 
+import java.util.Arrays;
+import java.util.Map;
+
 /**
  * Created by webee on 16/11/25.
  */
@@ -11,8 +14,18 @@ public class fastjsonJSON implements com.github.webee.json.JSON {
     }
 
     @Override
+    public com.github.webee.json.JSONObject newObject(Map<String, Object> map) {
+        return new JSONObject(new com.alibaba.fastjson.JSONObject(map));
+    }
+
+    @Override
     public com.github.webee.json.JSONArray newArray() {
         return new JSONArray(new com.alibaba.fastjson.JSONArray());
+    }
+
+    @Override
+    public com.github.webee.json.JSONArray newArray(Object[] array) {
+        return new JSONArray(new com.alibaba.fastjson.JSONArray(Arrays.asList(array)));
     }
 
     @Override
