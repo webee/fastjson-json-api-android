@@ -1,6 +1,10 @@
 package com.github.webee.fastjson;
 
-import com.github.webee.json.*;
+import com.github.webee.json.JSONType;
+import com.github.webee.json.Utils;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * Created by webee on 16/11/25.
@@ -23,8 +27,7 @@ public class JSONArray implements com.github.webee.json.JSONArray {
         if (index >= jsonArray.size()) {
             return null;
         }
-
-        return Utils.getType(jsonArray.get(index));
+        return Commons.getType(jsonArray.get(index));
     }
 
     @Override
@@ -33,13 +36,28 @@ public class JSONArray implements com.github.webee.json.JSONArray {
     }
 
     @Override
+    public Object[] get() {
+        return Utils.arrayToObjects(this);
+    }
+
+    @Override
     public Object get(int index) {
-        return jsonArray.get(index);
+        return Commons.resolveValue(jsonArray.get(index));
     }
 
     @Override
     public Boolean getBoolean(int index) {
         return jsonArray.getBoolean(index);
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(int index) {
+        return jsonArray.getBigDecimal(index);
+    }
+
+    @Override
+    public BigInteger getBigInteger(int index) {
+        return jsonArray.getBigInteger(index);
     }
 
     @Override

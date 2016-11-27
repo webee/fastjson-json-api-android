@@ -30,7 +30,13 @@ public class fastjsonJSON implements com.github.webee.json.JSON {
 
     @Override
     public Object parse(String text) {
-        return com.alibaba.fastjson.JSON.parse(text);
+        Object value = com.alibaba.fastjson.JSON.parse(text);
+        if (value instanceof com.alibaba.fastjson.JSONObject) {
+            return new JSONObject((com.alibaba.fastjson.JSONObject) value);
+        } else if (value instanceof com.alibaba.fastjson.JSONArray) {
+            return new JSONArray((com.alibaba.fastjson.JSONArray) value);
+        }
+        return value;
     }
 
     @Override

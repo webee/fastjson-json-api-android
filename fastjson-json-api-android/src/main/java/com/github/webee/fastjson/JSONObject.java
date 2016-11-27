@@ -3,6 +3,9 @@ package com.github.webee.fastjson;
 import com.github.webee.json.JSONType;
 import com.github.webee.json.Utils;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,7 +28,7 @@ public class JSONObject implements com.github.webee.json.JSONObject {
     }
 
     public JSONType getType(String key) {
-        return Utils.getType(jsonObject.get(key));
+        return Commons.getType(jsonObject.get(key));
     }
 
     public boolean isNull(String key) {
@@ -33,12 +36,27 @@ public class JSONObject implements com.github.webee.json.JSONObject {
     }
 
     @Override
+    public Map<String, Object> get() {
+        return Utils.objectToMap(this);
+    }
+
+    @Override
     public Object get(String key) {
-        return jsonObject.get(key);
+        return Commons.resolveValue(jsonObject.get(key));
     }
 
     public Boolean getBoolean(String key) {
         return jsonObject.getBoolean(key);
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(String key) {
+        return jsonObject.getBigDecimal(key);
+    }
+
+    @Override
+    public BigInteger getBigInteger(String key) {
+        return jsonObject.getBigInteger(key);
     }
 
     @Override
