@@ -19,18 +19,22 @@ public class JSONObject implements com.github.webee.json.JSONObject {
         this.jsonObject = jsonObject;
     }
 
+    @Override
     public Set<String> keySet() {
         return jsonObject.keySet();
     }
 
+    @Override
     public boolean hasKey(String key) {
         return jsonObject.containsKey(key);
     }
 
+    @Override
     public JSONType getType(String key) {
         return Commons.getType(jsonObject.get(key));
     }
 
+    @Override
     public boolean isNull(String key) {
         return jsonObject.get(key) == null;
     }
@@ -74,24 +78,19 @@ public class JSONObject implements com.github.webee.json.JSONObject {
         return jsonObject.getDouble(key);
     }
 
+    @Override
     public String getString(String key) {
         return jsonObject.getString(key);
     }
 
+    @Override
     public com.github.webee.json.JSONArray getArray(String key) {
         return new JSONArray(jsonObject.getJSONArray(key));
     }
 
+    @Override
     public com.github.webee.json.JSONObject getObject(String key) {
         return new JSONObject(jsonObject.getJSONObject(key));
-    }
-
-    public Object set(String key, Object value) {
-        return jsonObject.put(key, Utils.resolveValue(value));
-    }
-
-    public Object remove(String key) {
-        return jsonObject.remove(key);
     }
 
     @Override

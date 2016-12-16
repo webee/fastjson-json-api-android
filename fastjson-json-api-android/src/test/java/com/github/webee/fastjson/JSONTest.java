@@ -2,6 +2,7 @@ package com.github.webee.fastjson;
 
 import com.github.webee.json.JSON;
 import com.github.webee.json.JSONObject;
+import com.github.webee.json.WritableJSONObject;
 
 import org.junit.Test;
 
@@ -12,17 +13,18 @@ import java.util.Map;
  */
 
 public class JSONTest {
+    private JSON json = new fastjsonJSON();
     @Test
     public void testEncoding() {
-        JSON json = new fastjsonJSON();
-        JSONObject jsonObject = json.newObject();
-        jsonObject.set("name", "webee");
+        WritableJSONObject jsonObject = json.newObject();
+        jsonObject.set("name", "webee.易");
         jsonObject.set("age", 27);
+        jsonObject.set("address", null);
         jsonObject.set("height", 1.74);
         jsonObject.set("graduated", true);
         jsonObject.set("languages", new Object[]{"java", "python", "golang"});
 
-        JSONObject scores = json.newObject();
+        WritableJSONObject scores = json.newObject();
         scores.set("java", 80);
         scores.set("python", 85.0);
         scores.set("golang", 82.5);
@@ -35,10 +37,10 @@ public class JSONTest {
 
     @Test
     public void testDecoding() {
-        JSON json = new fastjsonJSON();
-        String text = "{\"age\":27,\"graduated\":true,\"height\":1.74,\"languages\":[\"java\",\"python\",\"golang\"],\"name\":\"webee\",\"scores\":{\"golang\":82.5,\"java\":80,\"python\":85}}";
+        String text = "{\"age\":27,\"graduated\":true,\"height\":1.74,\"languages\":[\"java\",\"python\",\"golang\"],\"name\":\"webee.易\",\"scores\":{\"golang\":82.5,\"java\":80,\"python\":85}}";
         JSONObject jsonObject = json.parseObject(text);
 
+        System.out.println(jsonObject.isNull("address"));
         System.out.println(jsonObject.get("languages").getClass());
         System.out.println(jsonObject.get("scores").getClass());
         System.out.println(jsonObject.toJSONString());
@@ -46,8 +48,7 @@ public class JSONTest {
 
     @Test
     public void test() {
-        JSON json = new fastjsonJSON();
-        JSONObject jsonObject = json.newObject();
+        WritableJSONObject jsonObject = json.newObject();
 
         jsonObject.set("key", "中国\uD83D\uDE00");
         System.out.println(jsonObject.toJSONString());
@@ -55,7 +56,6 @@ public class JSONTest {
 
     @Test
     public void testParse() {
-        JSON json = new fastjsonJSON();
         System.out.println(json.parse("null"));
         System.out.println(json.parse("true").getClass());
         System.out.println(json.parse("\"abc\"").getClass());
@@ -75,5 +75,15 @@ public class JSONTest {
         System.out.println(b[1].getClass());
         System.out.println(b[2].getClass());
         System.out.println(b[3].getClass());
+    }
+
+    @Test
+    public void testParseMsg() {
+        String msg = "{\"messageType\":0,\"text\":\"txt2\"}";
+        JSONObject value = json.parseObject(msg);
+        Map<String, Object> map = value.get();
+        Integer t = value.getInteger("messageType");
+        System.out.println(map);
+        System.out.println(t);
     }
 }

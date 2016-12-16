@@ -1,7 +1,9 @@
-package com.github.webee.fastjson;
+package com.github.webee.fastjson.test;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+
+import com.github.webee.fastjson.R;
 
 public class MainActivity extends AppCompatActivity {
 

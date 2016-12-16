@@ -14,6 +14,6 @@ To install the library add:
         maven { url "https://jitpack.io" }
    }
    dependencies {
-         compile 'com.github.webee:fastjson-json-api-android:v1.4.0'
+         compile 'com.github.webee:fastjson-json-api-android:v2.0.0'
    }
    ```

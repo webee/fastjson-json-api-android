@@ -91,21 +91,6 @@ public class JSONArray implements com.github.webee.json.JSONArray {
     }
 
     @Override
-    public boolean push(Object value) {
-        return jsonArray.add(Utils.resolveValue(value));
-    }
-
-    @Override
-    public Object set(int index, Object value) {
-        return jsonArray.set(index, Utils.resolveValue(value));
-    }
-
-    @Override
-    public Object remove(int index) {
-        return jsonArray.remove(index);
-    }
-
-    @Override
     public String toJSONString() {
         return jsonArray.toJSONString();
     }

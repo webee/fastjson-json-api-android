@@ -9,23 +9,23 @@ import java.util.Map;
 
 public class fastjsonJSON implements com.github.webee.json.JSON {
     @Override
-    public com.github.webee.json.JSONObject newObject() {
-        return new JSONObject(new com.alibaba.fastjson.JSONObject());
+    public com.github.webee.json.WritableJSONObject newObject() {
+        return new WritableJSONObject(new com.alibaba.fastjson.JSONObject());
     }
 
     @Override
-    public com.github.webee.json.JSONObject newObject(Map<String, Object> map) {
-        return new JSONObject(new com.alibaba.fastjson.JSONObject(map));
+    public com.github.webee.json.WritableJSONObject newObject(Map<String, Object> map) {
+        return new WritableJSONObject(new com.alibaba.fastjson.JSONObject(map));
     }
 
     @Override
-    public com.github.webee.json.JSONArray newArray() {
-        return new JSONArray(new com.alibaba.fastjson.JSONArray());
+    public com.github.webee.json.WritableJSONArray newArray() {
+        return new WritableJSONArray(new com.alibaba.fastjson.JSONArray());
     }
 
     @Override
-    public com.github.webee.json.JSONArray newArray(Object[] array) {
-        return new JSONArray(new com.alibaba.fastjson.JSONArray(Arrays.asList(array)));
+    public com.github.webee.json.WritableJSONArray newArray(Object[] array) {
+        return new WritableJSONArray(new com.alibaba.fastjson.JSONArray(Arrays.asList(array)));
     }
 
     @Override

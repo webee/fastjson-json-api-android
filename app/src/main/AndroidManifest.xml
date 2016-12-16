@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.webee.fastjson">
+    package="com.github.webee.fastjson.test">
 
     <application
         android:allowBackup="true"
