@@ -1,8 +1,14 @@
 package com.github.webee.fastjson;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.JSONSerializer;
+import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.serializer.SerializeWriter;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.github.webee.json.JSONType;
 import com.github.webee.json.Utils;
 
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Map;
@@ -95,6 +101,12 @@ public class JSONObject implements com.github.webee.json.JSONObject {
 
     @Override
     public String toJSONString() {
-        return jsonObject.toJSONString();
+        SerializeWriter out = new SerializeWriter((Writer) null, JSON.DEFAULT_GENERATE_FEATURE, new SerializerFeature[]{SerializerFeature.WriteMapNullValue});
+        try {
+            new JSONSerializer(out, SerializeConfig.globalInstance).write(jsonObject);
+            return out.toString();
+        } finally {
+            out.close();
+        }
     }
 }

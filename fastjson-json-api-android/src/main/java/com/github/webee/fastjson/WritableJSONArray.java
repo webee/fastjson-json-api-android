@@ -18,11 +18,11 @@ public class WritableJSONArray extends JSONArray implements com.github.webee.jso
 
     @Override
     public Object set(int index, Object value) {
-        return jsonArray.set(index, Utils.resolveValue(value));
+        return Commons.resolveValue(jsonArray.set(index, Utils.resolveValue(value)));
     }
 
     @Override
     public Object remove(int index) {
-        return jsonArray.remove(index);
+        return Commons.resolveValue(jsonArray.remove(index));
     }
 }

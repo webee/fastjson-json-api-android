@@ -13,11 +13,11 @@ public class WritableJSONObject extends JSONObject implements com.github.webee.j
 
     @Override
     public Object set(String key, Object value) {
-        return jsonObject.put(key, Utils.resolveValue(value));
+        return Commons.resolveValue(jsonObject.put(key, Utils.resolveValue(value)));
     }
 
     @Override
     public Object remove(String key) {
-        return jsonObject.remove(key);
+        return Commons.resolveValue(jsonObject.remove(key));
     }
 }

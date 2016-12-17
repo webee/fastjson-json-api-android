@@ -4,9 +4,8 @@ import com.github.webee.json.JSON;
 import com.github.webee.json.JSONObject;
 import com.github.webee.json.WritableJSONObject;
 
+import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Map;
 
 /**
  * Created by webee on 16/11/25.
@@ -22,52 +21,65 @@ public class JSONTest {
         jsonObject.set("address", null);
         jsonObject.set("height", 1.74);
         jsonObject.set("graduated", true);
-        jsonObject.set("languages", new Object[]{"java", "python", "golang"});
+        jsonObject.set("languages", new Object[]{"java", "python", "golang", null});
 
         WritableJSONObject scores = json.newObject();
         scores.set("java", 80);
         scores.set("python", 85.0);
         scores.set("golang", 82.5);
+        scores.set("xxx", null);
         jsonObject.set("scores", scores);
 
-        System.out.println(jsonObject.get("languages").getClass());
-        System.out.println(jsonObject.get("scores").getClass());
+        Assert.assertEquals(jsonObject.getString("name"), "webee.易");
+        Assert.assertEquals(jsonObject.getInteger("age"), Integer.valueOf(27));
+        Assert.assertEquals(jsonObject.getDouble("height"), Double.valueOf(1.74));
+        Assert.assertEquals(jsonObject.getString("address"), null);
+        Assert.assertEquals(jsonObject.isNull("address"), true);
+        Assert.assertEquals(jsonObject.getBoolean("graduated"), true);
+        Assert.assertEquals(jsonObject.getArray("languages").getString(0), "java");
+        Assert.assertEquals(jsonObject.getArray("languages").getString(3), null);
+        Assert.assertEquals(jsonObject.getArray("languages").isNull(3), true);
+        Assert.assertEquals(jsonObject.getObject("scores").getDouble("java"), Double.valueOf(80));
+        Assert.assertEquals(jsonObject.getObject("scores").getDouble("xxx"), null);
+        Assert.assertEquals(jsonObject.getObject("scores").isNull("xxx"), true);
+
+        //System.out.println(jsonObject.get("languages").getClass());
+        //System.out.println(jsonObject.get("scores").getClass());
         System.out.println(jsonObject.toJSONString());
     }
 
     @Test
     public void testDecoding() {
-        String text = "{\"age\":27,\"graduated\":true,\"height\":1.74,\"languages\":[\"java\",\"python\",\"golang\"],\"name\":\"webee.易\",\"scores\":{\"golang\":82.5,\"java\":80,\"python\":85}}";
+        String text = "{\"address\":null,\"age\":27,\"graduated\":true,\"height\":1.74,\"languages\":[\"java\",\"python\",\"golang\",null],\"name\":\"webee.易\",\"scores\":{\"golang\":82.5,\"java\":80,\"python\":85,\"xxx\":null}}";
         JSONObject jsonObject = json.parseObject(text);
 
-        System.out.println(jsonObject.isNull("address"));
-        System.out.println(jsonObject.get("languages").getClass());
-        System.out.println(jsonObject.get("scores").getClass());
-        System.out.println(jsonObject.toJSONString());
-    }
-
-    @Test
-    public void test() {
-        WritableJSONObject jsonObject = json.newObject();
-
-        jsonObject.set("key", "中国\uD83D\uDE00");
-        System.out.println(jsonObject.toJSONString());
+        Assert.assertEquals(jsonObject.getString("name"), "webee.易");
+        Assert.assertEquals(jsonObject.getInteger("age"), Integer.valueOf(27));
+        Assert.assertEquals(jsonObject.getDouble("height"), Double.valueOf(1.74));
+        Assert.assertEquals(jsonObject.isNull("address"), true);
+        Assert.assertEquals(jsonObject.getString("address"), null);
+        Assert.assertEquals(jsonObject.getBoolean("graduated"), true);
+        Assert.assertEquals(jsonObject.getArray("languages").getString(0), "java");
+        Assert.assertEquals(jsonObject.getArray("languages").getString(3), null);
+        Assert.assertEquals(jsonObject.getArray("languages").isNull(3), true);
+        Assert.assertEquals(jsonObject.getObject("scores").getDouble("java"), Double.valueOf(80));
+        Assert.assertEquals(jsonObject.getObject("scores").getDouble("xxx"), null);
+        Assert.assertEquals(jsonObject.getObject("scores").isNull("xxx"), true);
     }
 
     @Test
     public void testParse() {
-        System.out.println(json.parse("null"));
-        System.out.println(json.parse("true").getClass());
-        System.out.println(json.parse("\"abc\"").getClass());
-        System.out.println(json.parse("0").getClass());
-        System.out.println(json.parse("123456789").getClass());
-        System.out.println(json.parse("1234567890123456").getClass());
-        System.out.println(json.parse("1234.0").getClass());
-        System.out.println(json.parse("[]").getClass());
-        System.out.println(json.parseArray("[]").get().getClass());
-        System.out.println(json.parse("{}").getClass());
-        System.out.println(json.parseObject("{}").get().getClass());
-        System.out.println(json.parseObject("{\"a\":{}}").get("a").getClass());
+        Assert.assertEquals(json.parse("null"), null);
+        Assert.assertEquals(json.parse("true"), true);
+        Assert.assertEquals(json.parse("\"abc\""), "abc");
+        Assert.assertEquals(json.parse("0"), 0);
+        Assert.assertEquals(json.parse("123456789"), 123456789);
+        Assert.assertEquals(json.parse("1234567890123456"), 1234567890123456L);
+        Assert.assertEquals(json.parse("[]") instanceof com.github.webee.json.JSONArray, true);
+        Assert.assertArrayEquals(json.parseArray("[]").get(), new Object[0]);
+        Assert.assertEquals(json.parse("{}") instanceof com.github.webee.json.JSONObject, true);
+        Assert.assertEquals(json.parseObject("{}") instanceof com.github.webee.json.JSONObject, true);
+        /*
         Map<String, Object> a = (Map<String, Object>) json.parseObject("{\"a\":{\"b\":[1,2.3,{},999999999999999999999999999999999999999999999]}}").get("a");
         System.out.println(a.get("b").getClass());
         Object[] b = (Object[]) a.get("b");
@@ -75,15 +87,15 @@ public class JSONTest {
         System.out.println(b[1].getClass());
         System.out.println(b[2].getClass());
         System.out.println(b[3].getClass());
+        */
     }
 
     @Test
-    public void testParseMsg() {
-        String msg = "{\"messageType\":0,\"text\":\"txt2\"}";
-        JSONObject value = json.parseObject(msg);
-        Map<String, Object> map = value.get();
-        Integer t = value.getInteger("messageType");
-        System.out.println(map);
-        System.out.println(t);
+    public void testEmoji() {
+        WritableJSONObject jsonObject = json.newObject();
+
+        String value = "中国\uD83D\uDE00";
+        jsonObject.set("key", value);
+        Assert.assertEquals(jsonObject.getString("key"), value);
     }
 }

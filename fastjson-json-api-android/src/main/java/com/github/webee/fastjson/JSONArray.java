@@ -1,8 +1,14 @@
 package com.github.webee.fastjson;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.JSONSerializer;
+import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.serializer.SerializeWriter;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.github.webee.json.JSONType;
 import com.github.webee.json.Utils;
 
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -92,6 +98,12 @@ public class JSONArray implements com.github.webee.json.JSONArray {
 
     @Override
     public String toJSONString() {
-        return jsonArray.toJSONString();
+        SerializeWriter out = new SerializeWriter((Writer) null, JSON.DEFAULT_GENERATE_FEATURE, new SerializerFeature[]{SerializerFeature.WriteMapNullValue});
+        try {
+            new JSONSerializer(out, SerializeConfig.globalInstance).write(jsonArray);
+            return out.toString();
+        } finally {
+            out.close();
+        }
     }
 }
