@@ -1,5 +1,12 @@
 package com.github.webee.fastjson;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.JSONSerializer;
+import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.serializer.SerializeWriter;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -26,6 +33,17 @@ public class fastjsonJSON implements com.github.webee.json.JSON {
     @Override
     public com.github.webee.json.WritableJSONArray newArray(Object[] array) {
         return new WritableJSONArray(new com.alibaba.fastjson.JSONArray(Arrays.asList(array)));
+    }
+
+    @Override
+    public String serialize(Object value) {
+        SerializeWriter out = new SerializeWriter((Writer) null, JSON.DEFAULT_GENERATE_FEATURE, new SerializerFeature[]{SerializerFeature.WriteMapNullValue});
+        try {
+            new JSONSerializer(out, SerializeConfig.globalInstance).write(value);
+            return out.toString();
+        } finally {
+            out.close();
+        }
     }
 
     @Override

@@ -13,35 +13,14 @@ import org.junit.Test;
 
 public class JSONTest {
     private JSON json = new fastjsonJSON();
+
     @Test
     public void testEncoding() {
-        WritableJSONObject jsonObject = json.newObject();
-        jsonObject.set("name", "webee.易");
-        jsonObject.set("age", 27);
-        jsonObject.set("address", null);
-        jsonObject.set("height", 1.74);
-        jsonObject.set("graduated", true);
-        jsonObject.set("languages", new Object[]{"java", "python", "golang", null});
+        int age = 27;
+        double javaScore = 80.;
+        JSONObject jsonObject = genJsonObject(age, javaScore);
 
-        WritableJSONObject scores = json.newObject();
-        scores.set("java", 80);
-        scores.set("python", 85.0);
-        scores.set("golang", 82.5);
-        scores.set("xxx", null);
-        jsonObject.set("scores", scores);
-
-        Assert.assertEquals(jsonObject.getString("name"), "webee.易");
-        Assert.assertEquals(jsonObject.getInteger("age"), Integer.valueOf(27));
-        Assert.assertEquals(jsonObject.getDouble("height"), Double.valueOf(1.74));
-        Assert.assertEquals(jsonObject.getString("address"), null);
-        Assert.assertEquals(jsonObject.isNull("address"), true);
-        Assert.assertEquals(jsonObject.getBoolean("graduated"), true);
-        Assert.assertEquals(jsonObject.getArray("languages").getString(0), "java");
-        Assert.assertEquals(jsonObject.getArray("languages").getString(3), null);
-        Assert.assertEquals(jsonObject.getArray("languages").isNull(3), true);
-        Assert.assertEquals(jsonObject.getObject("scores").getDouble("java"), Double.valueOf(80));
-        Assert.assertEquals(jsonObject.getObject("scores").getDouble("xxx"), null);
-        Assert.assertEquals(jsonObject.getObject("scores").isNull("xxx"), true);
+        doAssets(jsonObject, age, javaScore);
 
         //System.out.println(jsonObject.get("languages").getClass());
         //System.out.println(jsonObject.get("scores").getClass());
@@ -50,21 +29,12 @@ public class JSONTest {
 
     @Test
     public void testDecoding() {
-        String text = "{\"address\":null,\"age\":27,\"graduated\":true,\"height\":1.74,\"languages\":[\"java\",\"python\",\"golang\",null],\"name\":\"webee.易\",\"scores\":{\"golang\":82.5,\"java\":80,\"python\":85,\"xxx\":null}}";
+        int age = 27;
+        double javaScore = 80.;
+        String text = genJsonObject(age, javaScore).toJSONString();
         JSONObject jsonObject = json.parseObject(text);
 
-        Assert.assertEquals(jsonObject.getString("name"), "webee.易");
-        Assert.assertEquals(jsonObject.getInteger("age"), Integer.valueOf(27));
-        Assert.assertEquals(jsonObject.getDouble("height"), Double.valueOf(1.74));
-        Assert.assertEquals(jsonObject.isNull("address"), true);
-        Assert.assertEquals(jsonObject.getString("address"), null);
-        Assert.assertEquals(jsonObject.getBoolean("graduated"), true);
-        Assert.assertEquals(jsonObject.getArray("languages").getString(0), "java");
-        Assert.assertEquals(jsonObject.getArray("languages").getString(3), null);
-        Assert.assertEquals(jsonObject.getArray("languages").isNull(3), true);
-        Assert.assertEquals(jsonObject.getObject("scores").getDouble("java"), Double.valueOf(80));
-        Assert.assertEquals(jsonObject.getObject("scores").getDouble("xxx"), null);
-        Assert.assertEquals(jsonObject.getObject("scores").isNull("xxx"), true);
+        doAssets(jsonObject, age, javaScore);
     }
 
     @Test
@@ -98,4 +68,102 @@ public class JSONTest {
         jsonObject.set("key", value);
         Assert.assertEquals(jsonObject.getString("key"), value);
     }
+
+    @Test
+    public void testEncodingPerf() {
+        int count = 10000;
+        long ts = 0;
+        long dMax = 0;
+        long dMin = Long.MAX_VALUE;
+        for (int i = 0; i <= count; i++) {
+            int age = i + 20;
+            double javaScore = i + 60.;
+            long ss = System.nanoTime();
+            JSONObject jsonObject = genJsonObject(age, javaScore);
+
+            doAssets(jsonObject, age, javaScore);
+
+            long ee = System.nanoTime();
+            long d = ee - ss;
+            if (i > 0) {
+                // 忽略第一次
+                ts += d;
+                dMax = Math.max(dMax, d);
+                dMin = Math.min(dMin, d);
+            }
+            System.out.println(String.format("%d: %f", i, d/1000000.));
+        }
+        System.out.println(String.format("total: %f", ts/1000000.));
+        System.out.println(String.format("avg: %f", ts/1000000./count));
+        System.out.println(String.format("max: %f", dMax/1000000.));
+        System.out.println(String.format("min: %f", dMin/1000000.));
+    }
+
+    @Test
+    public void testDecodingPerf() {
+        int count = 10000;
+        long ts = 0;
+        long dMax = 0;
+        long dMin = Long.MAX_VALUE;
+        for (int i = 0; i <= count; i++) {
+            int age = i + 20;
+            double javaScore = i + 60.;
+            String text = genJsonObject(age, javaScore).toJSONString();
+            long ss = System.nanoTime();
+            JSONObject jsonObject = new fastjsonJSON().parseObject(text);
+
+            doAssets(jsonObject, age, javaScore);
+
+            long ee = System.nanoTime();
+            long d = ee - ss;
+            if (i > 0) {
+                // 忽略第一次
+                ts += d;
+                dMax = Math.max(dMax, d);
+                dMin = Math.min(dMin, d);
+            }
+            System.out.println(String.format("%d: %f", i, d/1000000.));
+        }
+        System.out.println(String.format("total: %f", ts/1000000.));
+        System.out.println(String.format("avg: %f", ts/1000000./count));
+        System.out.println(String.format("max: %f", dMax/1000000.));
+        System.out.println(String.format("min: %f", dMin/1000000.));
+    }
+
+    private JSONObject genJsonObject(int age, double javaScore) {
+        WritableJSONObject jsonObject = new fastjsonJSON().newObject();
+        jsonObject.set("name", "webee.易");
+        jsonObject.set("age", age);
+        jsonObject.set("address", null);
+        jsonObject.set("height", 1.74);
+        jsonObject.set("graduated", true);
+        jsonObject.set("long.max", Long.MAX_VALUE);
+        jsonObject.set("languages", new Object[]{"java", "python", "golang", null});
+
+        WritableJSONObject scores = json.newObject();
+        scores.set("java", javaScore);
+        scores.set("python", 85.0);
+        scores.set("golang", 82.5);
+        scores.set("xxx", null);
+        jsonObject.set("scores", scores);
+
+        return jsonObject;
+    }
+
+    private void doAssets(JSONObject jsonObject, int age, double javaScore) {
+        Assert.assertEquals(jsonObject.getString("name"), "webee.易");
+        Assert.assertEquals(jsonObject.getInteger("age"), Integer.valueOf(age));
+        Assert.assertEquals(jsonObject.getDouble("height"), Double.valueOf(1.74));
+        Assert.assertEquals(jsonObject.getString("address"), null);
+        Assert.assertEquals(jsonObject.isNull("address"), true);
+        Assert.assertEquals(jsonObject.getBoolean("graduated"), true);
+        Assert.assertEquals(jsonObject.getLong("long.max"), Long.valueOf(Long.MAX_VALUE));
+        Assert.assertEquals(jsonObject.getArray("languages").getString(0), "java");
+        Assert.assertEquals(jsonObject.getArray("languages").getString(3), null);
+        Assert.assertEquals(jsonObject.getArray("languages").isNull(3), true);
+        Assert.assertEquals(jsonObject.getObject("scores").getDouble("java"), Double.valueOf(javaScore));
+        Assert.assertEquals(jsonObject.getObject("scores").getDouble("xxx"), null);
+        Assert.assertEquals(jsonObject.getObject("scores").isNull("xxx"), true);
+    }
+
 }
